@@ -3,47 +3,164 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Simulateur de rémunération des apprentis</title>
+<title>Simulateur rémunération apprenti</title>
+
 <style>
-body{font-family:system-ui,sans-serif;max-width:850px;margin:auto;padding:22px;background:#f5f7fa;color:#17202a}
-main{background:white;padding:24px;border-radius:16px;box-shadow:0 3px 18px #0001}
-h1{font-size:1.65rem} label{display:block;margin-top:16px;font-weight:650}
-select,input{width:100%;box-sizing:border-box;padding:11px;margin-top:6px;border:1px solid #bbb;border-radius:8px;font-size:1rem}
-button{margin-top:22px;padding:12px 18px;border:0;border-radius:9px;font-size:1rem;font-weight:700;cursor:pointer}
-#result{margin-top:22px;padding:16px;background:#eef3f8;border-radius:10px}
-small{color:#566}
+body{
+  font-family:Arial,sans-serif;
+  background:#f2f5f8;
+  margin:0;
+  color:#17212b;
+}
+main{
+  max-width:760px;
+  margin:auto;
+  background:white;
+  padding:22px;
+  min-height:100vh;
+}
+h1{
+  color:#124b7a;
+  font-size:1.7rem;
+  margin-bottom:6px;
+}
+.intro{
+  color:#52606d;
+  margin-bottom:25px;
+}
+label{
+  display:block;
+  font-weight:bold;
+  margin-top:18px;
+  margin-bottom:6px;
+}
+select,input{
+  width:100%;
+  box-sizing:border-box;
+  padding:12px;
+  border:1px solid #aab4be;
+  border-radius:8px;
+  font-size:16px;
+  background:white;
+}
+button{
+  width:100%;
+  margin-top:25px;
+  padding:15px;
+  border:0;
+  border-radius:9px;
+  background:#1261a0;
+  color:white;
+  font-size:17px;
+  font-weight:bold;
+}
+#result{
+  display:none;
+  margin-top:24px;
+  padding:18px;
+  background:#eaf4fb;
+  border-left:5px solid #1261a0;
+  border-radius:7px;
+}
+.amount{
+  font-size:1.7rem;
+  font-weight:bold;
+  color:#0b4775;
+}
+.warning{
+  margin-top:18px;
+  padding:13px;
+  background:#fff4d6;
+  border-radius:7px;
+}
+small{
+  color:#596773;
+}
+footer{
+  margin-top:35px;
+  padding-top:18px;
+  border-top:1px solid #ddd;
+  font-size:.82rem;
+  color:#64717d;
+}
 </style>
 </head>
-<body><main>
-<h1>Simulateur de rémunération des apprentis</h1>
-<p>Outil indicatif d'aide au calcul du minimum réglementaire. Les conventions collectives ou dispositions contractuelles plus favorables restent à vérifier.</p>
 
-<label>Âge
+<body>
+<main>
+
+<h1>Simulateur de rémunération des apprentis</h1>
+
+<p class="intro">
+Outil d'aide au calcul du salaire minimum réglementaire d'un apprenti.
+</p>
+
+<label>Âge de l'apprenti</label>
 <select id="age">
 <option value="u18">Moins de 18 ans</option>
 <option value="18">18 à 20 ans</option>
 <option value="21">21 à 25 ans</option>
 <option value="26">26 ans et plus</option>
-</select></label>
+</select>
 
-<label>Année d'exécution du contrat d'apprentissage
+<label>Situation dans le cycle de formation</label>
 <select id="year">
 <option value="1">1re année</option>
 <option value="2">2e année</option>
 <option value="3">3e année</option>
-</select></label>
+</select>
 
-<label>SMIC mensuel brut de référence (€)
-<input id="smic" type="number" step="0.01" placeholder="À renseigner avec la valeur réglementaire en vigueur"></label>
+<label>Type de formation / situation particulière</label>
+<select id="special">
+<option value="normal">Situation générale</option>
+<option value="licence">Licence professionnelle préparée en 1 an</option>
+<option value="reduced">Contrat plus court que le cycle de formation</option>
+</select>
 
-<label>Minimum conventionnel mensuel correspondant à l'emploi (€), si applicable
-<input id="conv" type="number" step="0.01" placeholder="Facultatif"></label>
+<label>Durée normale du cycle préparant à la qualification</label>
+<select id="cycle">
+<option value="1">1 an</option>
+<option value="2">2 ans</option>
+<option value="3">3 ans</option>
+</select>
 
-<button onclick="calc()">Calculer</button>
-<div id="result">Renseignez les paramètres puis lancez le calcul.</div>
+<label>Durée du contrat d'apprentissage</label>
+<select id="contract">
+<option value="1">1 an ou moins</option>
+<option value="2">2 ans</option>
+<option value="3">3 ans</option>
+</select>
 
-<p><small>Attention : les cas de succession de contrats, réduction/allongement de cycle, entrée directe dans une année de cycle, licence professionnelle, majorations et règles conventionnelles nécessitent une analyse spécifique. Cet outil ne remplace pas la vérification des textes applicables.</small></p>
+<label>Apprentissage antérieur</label>
+<select id="previous">
+<option value="no">Non — premier contrat d'apprentissage</option>
+<option value="yes">Oui — contrat d'apprentissage antérieur</option>
+</select>
+
+<label>SMIC mensuel brut de référence (€)</label>
+<input id="smic" type="number" step="0.01" value="1867.02">
+
+<label>Salaire minimum conventionnel mensuel (€)</label>
+<input id="conv" type="number" step="0.01"
+placeholder="Facultatif">
+
+<button onclick="calculate()">Calculer la rémunération</button>
+
+<div id="result"></div>
+
+<div class="warning">
+<strong>Attention :</strong> le résultat constitue une aide au calcul.
+Une convention collective, un accord ou une succession de contrats
+peut conduire à une rémunération plus favorable.
+</div>
+
+<footer>
+Références principales : Code du travail, articles D.6222-26 et suivants.
+Outil indicatif — vérifier la situation contractuelle avant établissement du contrat.
+</footer>
+
 </main>
+
 <script>
 const rates={
  u18:[27,39,55],
@@ -51,20 +168,85 @@ const rates={
  "21":[53,61,78],
  "26":[100,100,100]
 };
-function calc(){
- const a=document.getElementById('age').value;
- const y=+document.getElementById('year').value;
- const s=+document.getElementById('smic').value;
- const c=+document.getElementById('conv').value||0;
- if(!s){document.getElementById('result').innerHTML="<b>Veuillez renseigner le SMIC mensuel brut de référence.</b>";return}
- let pct=rates[a][y-1];
- let base=s;
- let note="Base SMIC.";
- if(a==="21" && c>s){base=c;note="Base conventionnelle retenue car supérieure au SMIC renseigné."}
- if(a==="26" && c>s){base=c;note="Minimum conventionnel retenu car supérieur au SMIC renseigné."}
- let amount=base*pct/100;
- document.getElementById('result').innerHTML=
- `<b>Taux indicatif : ${pct} %</b><br>Minimum brut indicatif : <b>${amount.toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}</b><br><small>${note}</small>`;
+
+function euro(n){
+ return n.toLocaleString("fr-FR",{
+   minimumFractionDigits:2,
+   maximumFractionDigits:2
+ })+" €";
 }
-</script>
-</body></html>
+
+function calculate(){
+
+ const age=document.getElementById("age").value;
+ let year=parseInt(document.getElementById("year").value);
+ const special=document.getElementById("special").value;
+ const cycle=parseInt(document.getElementById("cycle").value);
+ const contract=parseInt(document.getElementById("contract").value);
+ const previous=document.getElementById("previous").value;
+ const smic=parseFloat(document.getElementById("smic").value);
+ const conv=parseFloat(document.getElementById("conv").value)||0;
+
+ let explanation=[];
+ let alert="";
+
+ if(!smic || smic<=0){
+   alert("Veuillez renseigner le SMIC.");
+   return;
+ }
+
+ /* Licence professionnelle */
+ if(special==="licence"){
+   year=2;
+   explanation.push(
+     "Licence professionnelle : rémunération minimale correspondant à la 2e année d'exécution du contrat."
+   );
+ }
+
+ /* Contrat plus court que le cycle */
+ if(special==="reduced" && contract<cycle){
+   let completed=cycle-contract;
+   year=Math.min(3,completed+1);
+
+   explanation.push(
+     "La durée du contrat est inférieure à celle du cycle : la rémunération tient compte de la durée du cycle déjà réputée accomplie."
+   );
+ }
+
+ let pct=rates[age][year-1];
+
+ let base=smic;
+ let baseName="SMIC";
+
+ if((age==="21" || age==="26") && conv>smic){
+   base=conv;
+   baseName="minimum conventionnel";
+ }
+
+ let amount=base*pct/100;
+
+ if(previous==="yes"){
+   alert=
+   "Un contrat d'apprentissage antérieur est déclaré. Les règles de maintien ou de majoration de rémunération doivent être vérifiées selon le contrat précédent et le diplôme préparé.";
+ }
+
+ explanation.push(
+   "Taux retenu : "+pct+" % — base : "+baseName+"."
+ );
+
+ let html=
+   "<strong>Résultat indicatif</strong><br><br>"+
+   "<span class='amount'>"+euro(amount)+" brut / mois</span>"+
+   "<p><strong>Taux :</strong> "+pct+" %</p>"+
+   "<p><strong>Année de rémunération retenue :</strong> "+year+
+   (year===1?"re":year===2?"e":"e")+" année</p>"+
+   "<p>"+explanation.join("<br><br>")+"</p>";
+
+ if(alert){
+   html+="<div class='warning'><strong>Vérification nécessaire :</strong><br>"+alert+"</div>";
+ }
+
+ document.getElementById("result").innerHTML=html;
+ document.getElementById("result").style.display="block";
+ document.getElementById("result").scrollIntoView({
+   behavior:"smooth",
