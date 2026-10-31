@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Simulateur rémunération apprenti</title>
+<title>Simulateur de rémunération des apprentis</title>
 
 <style>
 body{
@@ -73,15 +73,14 @@ button{
   background:#fff4d6;
   border-radius:7px;
 }
-small{
-  color:#596773;
+small,footer{
+  color:#64717d;
 }
 footer{
   margin-top:35px;
   padding-top:18px;
   border-top:1px solid #ddd;
   font-size:.82rem;
-  color:#64717d;
 }
 </style>
 </head>
@@ -92,161 +91,98 @@ footer{
 <h1>Simulateur de rémunération des apprentis</h1>
 
 <p class="intro">
-Outil d'aide au calcul du salaire minimum réglementaire d'un apprenti.
+Outil d'aide au calcul de la rémunération minimale d'un apprenti.
 </p>
 
 <label>Âge de l'apprenti</label>
 <select id="age">
-<option value="u18">Moins de 18 ans</option>
-<option value="18">18 à 20 ans</option>
-<option value="21">21 à 25 ans</option>
-<option value="26">26 ans et plus</option>
+  <option value="u18">Moins de 18 ans</option>
+  <option value="18">18 à 20 ans</option>
+  <option value="21">21 à 25 ans</option>
+  <option value="26">26 ans et plus</option>
 </select>
 
-<label>Situation dans le cycle de formation</label>
+<label>Année de rémunération à retenir</label>
 <select id="year">
-<option value="1">1re année</option>
-<option value="2">2e année</option>
-<option value="3">3e année</option>
+  <option value="1">1re année</option>
+  <option value="2">2e année</option>
+  <option value="3">3e année</option>
 </select>
 
-<label>Type de formation / situation particulière</label>
+<label>Situation particulière</label>
 <select id="special">
-<option value="normal">Situation générale</option>
-<option value="licence">Licence professionnelle préparée en 1 an</option>
-<option value="reduced">Contrat plus court que le cycle de formation</option>
+  <option value="normal">Situation générale</option>
+  <option value="licence">Licence professionnelle préparée en 1 an</option>
+  <option value="reduced">Durée du contrat inférieure au cycle de formation</option>
 </select>
 
-<label>Durée normale du cycle préparant à la qualification</label>
+<label>Durée normale du cycle de formation</label>
 <select id="cycle">
-<option value="1">1 an</option>
-<option value="2">2 ans</option>
-<option value="3">3 ans</option>
+  <option value="1">1 an</option>
+  <option value="2">2 ans</option>
+  <option value="3">3 ans</option>
 </select>
 
 <label>Durée du contrat d'apprentissage</label>
 <select id="contract">
-<option value="1">1 an ou moins</option>
-<option value="2">2 ans</option>
-<option value="3">3 ans</option>
+  <option value="1">1 an ou moins</option>
+  <option value="2">2 ans</option>
+  <option value="3">3 ans</option>
 </select>
 
-<label>Apprentissage antérieur</label>
+<label>Contrat d'apprentissage antérieur</label>
 <select id="previous">
-<option value="no">Non — premier contrat d'apprentissage</option>
-<option value="yes">Oui — contrat d'apprentissage antérieur</option>
+  <option value="no">Non — premier contrat d'apprentissage</option>
+  <option value="yes">Oui — contrat d'apprentissage antérieur</option>
 </select>
 
 <label>SMIC mensuel brut de référence (€)</label>
 <input id="smic" type="number" step="0.01" value="1867.02">
 
 <label>Salaire minimum conventionnel mensuel (€)</label>
-<input id="conv" type="number" step="0.01"
-placeholder="Facultatif">
+<input id="conv" type="number" step="0.01" placeholder="Facultatif">
 
-<button onclick="calculate()">Calculer la rémunération</button>
+<button type="button" onclick="calculate()">Calculer la rémunération</button>
 
 <div id="result"></div>
 
 <div class="warning">
-<strong>Attention :</strong> le résultat constitue une aide au calcul.
-Une convention collective, un accord ou une succession de contrats
-peut conduire à une rémunération plus favorable.
+<strong>Important :</strong> ce simulateur fournit un résultat indicatif.
+Une convention collective, un accord, une succession de contrats ou une
+situation particulière peut conduire à une rémunération différente ou plus favorable.
 </div>
 
 <footer>
 Références principales : Code du travail, articles D.6222-26 et suivants.
-Outil indicatif — vérifier la situation contractuelle avant établissement du contrat.
+Vérifier la situation contractuelle avant l'établissement du contrat.
 </footer>
 
 </main>
 
 <script>
-const rates={
- u18:[27,39,55],
- "18":[43,51,67],
- "21":[53,61,78],
- "26":[100,100,100]
+const rates = {
+  u18: [27,39,55],
+  "18": [43,51,67],
+  "21": [53,61,78],
+  "26": [100,100,100]
 };
 
-function euro(n){
- return n.toLocaleString("fr-FR",{
-   minimumFractionDigits:2,
-   maximumFractionDigits:2
- })+" €";
+function euro(value){
+  return value.toLocaleString("fr-FR",{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  }) + " €";
 }
 
 function calculate(){
 
- const age=document.getElementById("age").value;
- let year=parseInt(document.getElementById("year").value);
- const special=document.getElementById("special").value;
- const cycle=parseInt(document.getElementById("cycle").value);
- const contract=parseInt(document.getElementById("contract").value);
- const previous=document.getElementById("previous").value;
- const smic=parseFloat(document.getElementById("smic").value);
- const conv=parseFloat(document.getElementById("conv").value)||0;
+  const age = document.getElementById("age").value;
+  let year = Number(document.getElementById("year").value);
+  const special = document.getElementById("special").value;
+  const cycle = Number(document.getElementById("cycle").value);
+  const contract = Number(document.getElementById("contract").value);
+  const previous = document.getElementById("previous").value;
+  const smic = Number(document.getElementById("smic").value);
+  const conv = Number(document.getElementById("conv").value) || 0;
 
- let explanation=[];
- let alert="";
-
- if(!smic || smic<=0){
-   alert("Veuillez renseigner le SMIC.");
-   return;
- }
-
- /* Licence professionnelle */
- if(special==="licence"){
-   year=2;
-   explanation.push(
-     "Licence professionnelle : rémunération minimale correspondant à la 2e année d'exécution du contrat."
-   );
- }
-
- /* Contrat plus court que le cycle */
- if(special==="reduced" && contract<cycle){
-   let completed=cycle-contract;
-   year=Math.min(3,completed+1);
-
-   explanation.push(
-     "La durée du contrat est inférieure à celle du cycle : la rémunération tient compte de la durée du cycle déjà réputée accomplie."
-   );
- }
-
- let pct=rates[age][year-1];
-
- let base=smic;
- let baseName="SMIC";
-
- if((age==="21" || age==="26") && conv>smic){
-   base=conv;
-   baseName="minimum conventionnel";
- }
-
- let amount=base*pct/100;
-
- if(previous==="yes"){
-   alert=
-   "Un contrat d'apprentissage antérieur est déclaré. Les règles de maintien ou de majoration de rémunération doivent être vérifiées selon le contrat précédent et le diplôme préparé.";
- }
-
- explanation.push(
-   "Taux retenu : "+pct+" % — base : "+baseName+"."
- );
-
- let html=
-   "<strong>Résultat indicatif</strong><br><br>"+
-   "<span class='amount'>"+euro(amount)+" brut / mois</span>"+
-   "<p><strong>Taux :</strong> "+pct+" %</p>"+
-   "<p><strong>Année de rémunération retenue :</strong> "+year+
-   (year===1?"re":year===2?"e":"e")+" année</p>"+
-   "<p>"+explanation.join("<br><br>")+"</p>";
-
- if(alert){
-   html+="<div class='warning'><strong>Vérification nécessaire :</strong><br>"+alert+"</div>";
- }
-
- document.getElementById("result").innerHTML=html;
- document.getElementById("result").style.display="block";
- document.getElementById("result").scrollIntoView({
-   behavior:"smooth",
+  const explanations
