@@ -2,187 +2,208 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Simulateur de rémunération des apprentis</title>
-
 <style>
-body{
-  font-family:Arial,sans-serif;
-  background:#f2f5f8;
-  margin:0;
-  color:#17212b;
-}
-main{
-  max-width:760px;
-  margin:auto;
-  background:white;
-  padding:22px;
-  min-height:100vh;
-}
-h1{
-  color:#124b7a;
-  font-size:1.7rem;
-  margin-bottom:6px;
-}
-.intro{
-  color:#52606d;
-  margin-bottom:25px;
-}
-label{
-  display:block;
-  font-weight:bold;
-  margin-top:18px;
-  margin-bottom:6px;
-}
-select,input{
-  width:100%;
-  box-sizing:border-box;
-  padding:12px;
-  border:1px solid #aab4be;
-  border-radius:8px;
-  font-size:16px;
-  background:white;
-}
-button{
-  width:100%;
-  margin-top:25px;
-  padding:15px;
-  border:0;
-  border-radius:9px;
-  background:#1261a0;
-  color:white;
-  font-size:17px;
-  font-weight:bold;
-}
-#result{
-  display:none;
-  margin-top:24px;
-  padding:18px;
-  background:#eaf4fb;
-  border-left:5px solid #1261a0;
-  border-radius:7px;
-}
-.amount{
-  font-size:1.7rem;
-  font-weight:bold;
-  color:#0b4775;
-}
-.warning{
-  margin-top:18px;
-  padding:13px;
-  background:#fff4d6;
-  border-radius:7px;
-}
-small,footer{
-  color:#64717d;
-}
-footer{
-  margin-top:35px;
-  padding-top:18px;
-  border-top:1px solid #ddd;
-  font-size:.82rem;
-}
+:root{--bg:#f3f6f9;--card:#fff;--ink:#17212b;--muted:#5f6b76;--blue:#124b7a;--line:#d7dee5;--ok:#eaf7ef;--warn:#fff6df}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+main{max-width:820px;margin:auto;padding:18px}
+.card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,.07);margin-bottom:16px}
+h1{font-size:1.75rem;color:var(--blue);margin:0 0 8px} h2{font-size:1.15rem;color:var(--blue);margin:0 0 12px}
+p{line-height:1.45}.intro,.small{color:var(--muted)}.small{font-size:.9rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;font-weight:700;margin-bottom:6px}
+select,input{width:100%;padding:12px;border:1px solid #aeb9c4;border-radius:9px;background:#fff;font-size:16px;color:var(--ink)}
+.field{margin-bottom:14px}.hidden{display:none}
+button{width:100%;border:0;border-radius:10px;padding:14px 18px;background:var(--blue);color:white;font-size:17px;font-weight:700;cursor:pointer}
+button:active{transform:translateY(1px)}
+.result{margin-top:16px;padding:16px;border-radius:12px;background:var(--ok);border:1px solid #b9dfc7}
+.result strong.big{display:block;font-size:1.65rem;color:#0d5d31;margin:5px 0}
+.warning{margin-top:12px;padding:12px;border-radius:10px;background:var(--warn);border:1px solid #ead28b}
+.error{margin-top:12px;padding:12px;border-radius:10px;background:#fdecec;border:1px solid #e5aaaa;color:#8a1f1f}
+table{width:100%;border-collapse:collapse;font-size:.92rem}th,td{border:1px solid var(--line);padding:8px;text-align:center}th{background:#eef3f7}
+footer{text-align:center;color:var(--muted);font-size:.82rem;padding:6px 0 20px}
+@media(max-width:650px){main{padding:10px}.card{padding:16px}.grid{grid-template-columns:1fr}h1{font-size:1.45rem}}
+@media print{body{background:white}.card{box-shadow:none;border:1px solid #ddd}button{display:none}}
 </style>
 </head>
-
 <body>
 <main>
-
+<section class="card">
 <h1>Simulateur de rémunération des apprentis</h1>
+<p class="intro">Estimation du <b>salaire minimum brut mensuel</b> en contrat d’apprentissage — France métropolitaine, paramètres 2026. Le calcul s’effectue entièrement dans votre navigateur.</p>
+</section>
 
-<p class="intro">
-Outil d'aide au calcul de la rémunération minimale d'un apprenti.
-</p>
-
-<label>Âge de l'apprenti</label>
-<select id="age">
-  <option value="u18">Moins de 18 ans</option>
-  <option value="18">18 à 20 ans</option>
-  <option value="21">21 à 25 ans</option>
-  <option value="26">26 ans et plus</option>
-</select>
-
-<label>Année de rémunération à retenir</label>
-<select id="year">
-  <option value="1">1re année</option>
-  <option value="2">2e année</option>
-  <option value="3">3e année</option>
-</select>
-
-<label>Situation particulière</label>
-<select id="special">
-  <option value="normal">Situation générale</option>
-  <option value="licence">Licence professionnelle préparée en 1 an</option>
-  <option value="reduced">Durée du contrat inférieure au cycle de formation</option>
-</select>
-
-<label>Durée normale du cycle de formation</label>
-<select id="cycle">
-  <option value="1">1 an</option>
-  <option value="2">2 ans</option>
-  <option value="3">3 ans</option>
-</select>
-
-<label>Durée du contrat d'apprentissage</label>
-<select id="contract">
-  <option value="1">1 an ou moins</option>
-  <option value="2">2 ans</option>
-  <option value="3">3 ans</option>
-</select>
-
-<label>Contrat d'apprentissage antérieur</label>
-<select id="previous">
-  <option value="no">Non — premier contrat d'apprentissage</option>
-  <option value="yes">Oui — contrat d'apprentissage antérieur</option>
-</select>
-
-<label>SMIC mensuel brut de référence (€)</label>
-<input id="smic" type="number" step="0.01" value="1867.02">
-
-<label>Salaire minimum conventionnel mensuel (€)</label>
-<input id="conv" type="number" step="0.01" placeholder="Facultatif">
-
-<button type="button" onclick="calculate()">Calculer la rémunération</button>
-
-<div id="result"></div>
-
-<div class="warning">
-<strong>Important :</strong> ce simulateur fournit un résultat indicatif.
-Une convention collective, un accord, une succession de contrats ou une
-situation particulière peut conduire à une rémunération différente ou plus favorable.
+<section class="card">
+<h2>1. Situation de l’apprenti</h2>
+<div class="grid">
+  <div class="field"><label for="age">Âge</label>
+    <select id="age">
+      <option value="u18">Moins de 18 ans</option>
+      <option value="18_20">18 à 20 ans</option>
+      <option value="21_25">21 à 25 ans</option>
+      <option value="26p">26 ans et plus</option>
+    </select>
+  </div>
+  <div class="field"><label for="smic">SMIC mensuel brut (€)</label>
+    <input id="smic" type="number" min="0" step="0.01" value="1867.02">
+  </div>
 </div>
+<div id="smcWrap" class="field hidden">
+  <label for="smc">Salaire minimum conventionnel mensuel de l’emploi (SMC), si connu (€)</label>
+  <input id="smc" type="number" min="0" step="0.01" placeholder="Laisser vide s’il n’est pas connu">
+</div>
+</section>
 
-<footer>
-Références principales : Code du travail, articles D.6222-26 et suivants.
-Vérifier la situation contractuelle avant l'établissement du contrat.
-</footer>
+<section class="card">
+<h2>2. Formation et durée</h2>
+<div class="field">
+<label for="licencePro">Nature de la certification préparée</label>
+<select id="licencePro">
+<option value="non">Diplôme / titre hors licence professionnelle (ex. Bachelor / titre RNCP niveau 6)</option>
+<option value="oui">Licence professionnelle (diplôme national)</option>
+</select>
+</div>
+<div id="durationFields" class="grid">
+  <div class="field"><label for="cycle">Durée normale du cycle préparé</label>
+    <select id="cycle"><option value="1">1 an</option><option value="2">2 ans</option><option value="3">3 ans</option></select>
+  </div>
+  <div class="field"><label for="contract">Durée du contrat / période d’apprentissage</label>
+    <select id="contract"><option value="1">1 an</option><option value="2">2 ans</option><option value="3">3 ans</option></select>
+  </div>
+</div>
+<div class="warning"><b>Attention au Bac+3 :</b> un Bachelor ou un titre RNCP de niveau 6 n’est pas automatiquement une licence professionnelle. Le seul niveau 6 / Bac+3 ne suffit donc pas à appliquer la règle spéciale de la licence professionnelle. Une licence professionnelle préparée en apprentissage relève du minimum de 2e année. Pour un Bachelor / titre RNCP niveau 6, le calcul dépend notamment de la durée réelle du cycle de formation et de la situation de l’apprenti.</div>
+<p class="small">Exemple : un Bachelor / titre RNCP niveau 6 constituant une certification autonome normalement préparée en 1 an et réalisée en 1 an reste, en principe, une 1re année d’exécution pour un nouvel apprenti. En revanche, lorsqu’un contrat est raccourci par rapport à la durée normale du cycle préparé, la règle des années réputées accomplies peut modifier l’année de rémunération.</p>
+</section>
 
+<section class="card">
+<h2>3. Contrats d’apprentissage antérieurs</h2>
+<div class="field">
+<label for="previous">Un précédent contrat d’apprentissage a-t-il permis d’obtenir le diplôme ou titre préparé ?</label>
+<select id="previous"><option value="non">Non / premier contrat</option><option value="oui">Oui</option></select>
+</div>
+<div id="previousFields" class="grid hidden">
+  <div class="field"><label for="prevAge">Tranche d’âge lors de la dernière année du contrat précédent</label>
+    <select id="prevAge"><option value="u18">Moins de 18 ans</option><option value="18_20">18 à 20 ans</option><option value="21_25">21 à 25 ans</option><option value="26p">26 ans et plus</option></select>
+  </div>
+  <div class="field"><label for="prevYear">Dernière année d’exécution du contrat précédent</label>
+    <select id="prevYear"><option value="1">1re année</option><option value="2">2e année</option><option value="3">3e année</option></select>
+  </div>
+</div>
+</section>
+
+<section class="card">
+<button id="calculate" type="button">Calculer la rémunération</button>
+<div id="output" aria-live="polite"></div>
+</section>
+
+<section class="card">
+<h2>Grille réglementaire utilisée</h2>
+<table>
+<thead><tr><th>Année</th><th>&lt; 18 ans</th><th>18–20 ans</th><th>21–25 ans*</th><th>26 ans et +*</th></tr></thead>
+<tbody>
+<tr><td>1re</td><td>27 %</td><td>43 %</td><td>53 %</td><td>100 %</td></tr>
+<tr><td>2e</td><td>39 %</td><td>51 %</td><td>61 %</td><td>100 %</td></tr>
+<tr><td>3e</td><td>55 %</td><td>67 %</td><td>78 %</td><td>100 %</td></tr>
+</tbody>
+</table>
+<p class="small">* Pour les 21 ans et plus, comparaison avec le salaire minimum conventionnel correspondant à l’emploi occupé lorsqu’il est plus favorable. Des dispositions conventionnelles ou contractuelles peuvent prévoir davantage.</p>
+</section>
+
+<footer>Outil indicatif — vérifier les situations particulières avec les textes en vigueur, l’OPCO / l’employeur et la convention collective applicable.</footer>
 </main>
 
 <script>
+(function(){
+"use strict";
+
 const rates = {
-  u18: [27,39,55],
-  "18": [43,51,67],
-  "21": [53,61,78],
-  "26": [100,100,100]
+  u18:   {1:27, 2:39, 3:55},
+  "18_20": {1:43, 2:51, 3:67},
+  "21_25": {1:53, 2:61, 3:78},
+  "26p":   {1:100,2:100,3:100}
 };
 
-function euro(value){
-  return value.toLocaleString("fr-FR",{
-    minimumFractionDigits:2,
-    maximumFractionDigits:2
-  }) + " €";
+const $ = id => document.getElementById(id);
+const money = n => new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR"}).format(n);
+
+function refresh(){
+  const age = $("age").value;
+  $("smcWrap").classList.toggle("hidden", !(age==="21_25" || age==="26p"));
+  $("previousFields").classList.toggle("hidden", $("previous").value!=="oui");
 }
+$("age").addEventListener("change", refresh);
+$("previous").addEventListener("change", refresh);
 
 function calculate(){
+  try{
+    const age = $("age").value;
+    const smic = Number($("smic").value);
+    if(!Number.isFinite(smic) || smic<=0) throw new Error("Veuillez saisir un montant de SMIC valide.");
 
-  const age = document.getElementById("age").value;
-  let year = Number(document.getElementById("year").value);
-  const special = document.getElementById("special").value;
-  const cycle = Number(document.getElementById("cycle").value);
-  const contract = Number(document.getElementById("contract").value);
-  const previous = document.getElementById("previous").value;
-  const smic = Number(document.getElementById("smic").value);
-  const conv = Number(document.getElementById("conv").value) || 0;
+    const cycle = Number($("cycle").value);
+    const contract = Number($("contract").value);
+    if(contract > cycle && $("licencePro").value!=="oui"){
+      throw new Error("La durée du contrat saisie est supérieure à la durée normale du cycle. Vérifiez les durées.");
+    }
 
-  const explanations
+    let effectiveYear;
+    let reason;
+
+    if($("licencePro").value==="oui"){
+      effectiveYear = 2;
+      reason = "Licence professionnelle : l’article D. 6222-32 du Code du travail prévoit une rémunération minimale correspondant à la 2e année d’exécution. Cette règle spécifique ne doit pas être appliquée automatiquement aux Bachelors ou autres titres RNCP de niveau 6.";
+    } else {
+      const deemedCompleted = Math.max(0, cycle - contract);
+      effectiveYear = Math.min(3, 1 + deemedCompleted);
+      reason = deemedCompleted>0
+        ? "Contrat plus court que le cycle : "+deemedCompleted+" année(s) réputée(s) déjà accomplie(s), soit application de la "+effectiveYear+(effectiveYear===1?"re":"e")+" année."
+        : "Durée du contrat égale au cycle renseigné : application de la 1re année au début du contrat.";
+    }
+
+    let rate = rates[age][effectiveYear];
+    let continuityNote = "";
+
+    if($("previous").value==="oui"){
+      const pa = $("prevAge").value;
+      const py = Number($("prevYear").value);
+      const previousRate = rates[pa][py];
+      if(previousRate > rate){
+        rate = previousRate;
+        continuityNote = " Continuité de rémunération : le minimum réglementaire du contrat précédent ("+previousRate+" %) est plus favorable et a été conservé.";
+      } else {
+        continuityNote = " Le barème du nouveau contrat est au moins aussi favorable que le minimum réglementaire du contrat précédent ("+previousRate+" %).";
+      }
+    }
+
+    let base = smic;
+    let baseText = "SMIC";
+    if(age==="21_25" || age==="26p"){
+      const smcRaw = $("smc").value.trim();
+      if(smcRaw!==""){
+        const smc = Number(smcRaw);
+        if(!Number.isFinite(smc) || smc<=0) throw new Error("Le SMC renseigné n’est pas valide.");
+        if(smc > smic){ base=smc; baseText="SMC (plus favorable)"; }
+      }
+    }
+
+    const salary = base * rate / 100;
+    $("output").innerHTML =
+      '<div class="result">'+
+      '<div>Taux minimal retenu : <b>'+rate+' %</b></div>'+
+      '<strong class="big">'+money(salary)+' brut / mois</strong>'+
+      '<div>Base de calcul : '+baseText+' = '+money(base)+'</div>'+
+      '<div style="margin-top:8px"><b>Pourquoi ?</b> '+reason+continuityNote+'</div>'+
+      '</div>'+
+      '<div class="warning"><b>À vérifier :</b> convention collective, clauses contractuelles plus favorables et situation exacte du cycle de formation. Le résultat est un minimum réglementaire indicatif.</div>';
+  }catch(e){
+    $("output").innerHTML='<div class="error">'+e.message+'</div>';
+  }
+}
+
+$("calculate").addEventListener("click", calculate);
+refresh();
+})();
+</script>
+</body>
+</html>
